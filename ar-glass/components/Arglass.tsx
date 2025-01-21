@@ -11,6 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MessageBox from "./MessageBox";
 import AlertBox from "./AlertBox";
+import Button from "./Button";
 
 const Webcam = dynamic(() => import("react-webcam"), { ssr: false });
 
@@ -59,6 +60,10 @@ const Arglass = () => {
     return () => clearInterval(interval);
   }, [capture]);
 
+  const sendMessage = () => {};
+  const sendAlert = () => {};
+  const sendNotification = () => {};
+
   return (
     <div className="h-[800px] relative mx-6  bg-[url('/glass/warehouse.jpg')] bg-cover bg-center ">
       <div className="relative w-full h-full">
@@ -78,6 +83,20 @@ const Arglass = () => {
         <MessageBox />
       </div>
       <AlertBox alert="This is an alert" />
+      <div className="absolute bottom-5 left-1/2 translate-x-[-50%] flex gap-3">
+        <Button className="bg-blue-500" onClick={() => sendMessage()}>
+          Message
+        </Button>
+        <Button className="bg-red-500" onClick={() => sendAlert()}>
+          Alert
+        </Button>
+        <Button
+          className="bg-slate-100 text-black"
+          onClick={() => sendNotification()}
+        >
+          Notify
+        </Button>
+      </div>
       <ToastContainer />
     </div>
   );
