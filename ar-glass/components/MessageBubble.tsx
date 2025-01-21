@@ -3,7 +3,7 @@ import React from "react";
 const MessageBubble = ({ type }: { type: string }) => {
   if (type === "worker") {
     return (
-      <div className=" bg-slate-500 absolute right-0 inline-flex px-5 text-white rounded-3xl">
+      <div className=" bg-slate-500 absolute right-0 inline-flex px-5 text-white rounded-3xl mt-6">
         Message from worker
       </div>
     );
