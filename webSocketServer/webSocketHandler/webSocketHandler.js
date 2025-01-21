@@ -14,15 +14,16 @@ module.exports = class WebSocketHandler {
     this.wsServer.on("connection", (wsclient, req) => {
       console.log("new wsclient connecting");
 
-      var isAuthenticated = false;
+      var isAuthenticated = [false];
 
       wsclient.once("message", (message) => {
-        const parsedMessage = JSON.stringify(message);
+        const parsedMessage = JSON.parse(message);
+        console.log("handshake message recieved : ", parsedMessage);
         this.onceMessageHandler(parsedMessage, isAuthenticated, wsclient);
       });
 
       setTimeout(() => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated[0]) {
           console.log("Authentication timeout. Closing connection.");
           wsclient.send(
             JSON.stringify({
@@ -40,7 +41,8 @@ module.exports = class WebSocketHandler {
       console.log(
         `Hanshake successfull for user : ${parsedMessage.username}, starting to listen for normal messages of this user`
       );
-      isAuthenticated = true;
+
+      isAuthenticated[0] = true;
       wsclient.on("message", (message) => {
         const newParsedMessage = JSON.parse(message);
         this.onMessageHandler(newParsedMessage, parsedMessage.username);
@@ -48,9 +50,7 @@ module.exports = class WebSocketHandler {
     } else {
       wsclient.send(
         JSON.stringify({
-          messageText: `Error! You have failed the handshake procedure, username wasnt recived, what was recieved from you : ${JSON.stringify(
-            parsedMessage
-          )}`,
+          messageText: `Error! You have failed the handshake procedure, username wasnt recived, what was recieved from you : ${parsedMessage}`,
         })
       );
       wsclient.send(
