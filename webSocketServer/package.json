@@ -1,0 +1,21 @@
+{
+  "name": "websocketserver",
+  "version": "1.0.0",
+  "description": "websocket server ment to connect Dashboard and ar-glass",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "http": "^0.0.1-security",
+    "nodemon": "^3.1.9",
+    "ws": "^8.18.0"
+  }
+}
