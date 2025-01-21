@@ -10,6 +10,7 @@ import Controlbox from "./Controlbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MessageBox from "./MessageBox";
+import AlertBox from "./AlertBox";
 
 const Webcam = dynamic(() => import("react-webcam"), { ssr: false });
 
@@ -59,7 +60,7 @@ const Arglass = () => {
   }, [capture]);
 
   return (
-    <div className="h-[800px] mx-6  bg-[url('/glass/warehouse.jpg')] bg-cover bg-center ">
+    <div className="h-[800px] relative mx-6  bg-[url('/glass/warehouse.jpg')] bg-cover bg-center ">
       <div className="relative w-full h-full">
         <Webcam
           audio={false}
@@ -76,6 +77,7 @@ const Arglass = () => {
         <Controlbox />
         <MessageBox />
       </div>
+      <AlertBox alert="This is an alert" />
       <ToastContainer />
     </div>
   );
