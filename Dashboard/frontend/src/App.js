@@ -9,12 +9,18 @@ import {
   Legend,
 } from "recharts";
 import "./App.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Chart } from "react-google-charts";
+import { data, dataDonut, optionsDonut } from "./data/data";
 
 function App() {
   const [periods, setPeriods] = useState(4);
   const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const getForecast = async () => {
     try {
@@ -46,30 +52,39 @@ function App() {
   };
 
   return (
-    <div className="container">
+    <div className="container mx-auto justify-center items-center p-4 flex flex-col md:flex-row gap-4">
+      {/* Sales Forecast Section */}
       <div className="card">
-        <h2>Sales Forecast</h2>
+        <h2 className="text-3xl font-medium">Sales Forecast</h2>
         <div className="controls">
-          <input
-            type="number"
-            min="1"
-            max="12"
-            value={periods}
-            onChange={(e) => setPeriods(e.target.value)}
-            placeholder="Periods"
-            style={{ width: "120px", padding: "8px", marginRight: "10px" }}
-          />
+          <div className="flex flex-col md:flex-row justify-between items-center mb-3">
+            <div>
+              <label className="periods">From: </label>
+              <DatePicker
+                className="p-3"
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+              />
+            </div>
+            <div>
+              <label className="periods">To: </label>
+              <DatePicker
+                className="p-3"
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+              />
+            </div>
+          </div>
           <button
-            onClick={getForecast}
-            disabled={loading}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
+            onClick={() => {
+              const diffInMonths =
+                (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+                (endDate.getMonth() - startDate.getMonth());
+              setPeriods(diffInMonths);
+              getForecast();
             }}
+            disabled={loading}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           >
             {loading ? "Loading..." : "Get Forecast"}
           </button>
@@ -81,6 +96,7 @@ function App() {
 
         {forecast && (
           <div style={{ overflowX: "auto", marginTop: "20px" }}>
+            <h3 className="text-2xl font-medium mb-4">Forecasted Sales Chart</h3>
             <LineChart
               width={800}
               height={400}
@@ -88,8 +104,13 @@ function App() {
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
+              <XAxis
+                dataKey="date"
+                label={{ value: "Month", position: "bottom", offset: -10 }}
+              />
+              <YAxis
+                label={{ value: "Sales", angle: -90, position: "left", offset: 10 }}
+              />
               <Tooltip />
               <Legend />
               <Line
@@ -101,6 +122,46 @@ function App() {
             </LineChart>
           </div>
         )}
+      </div>
+
+      {/* Geographical Sales & Donut Charts Section */}
+      <div className="flex flex-col gap-4">
+        {/* Geographical Sales Distribution */}
+        <div className="card w-full">
+          <h3 className="font-bold text-2xl mb-2">
+            Geographical Sales Distribution
+          </h3>
+          <Chart
+            chartEvents={[
+              {
+                eventName: "select",
+                callback: ({ chartWrapper }) => {
+                  const chart = chartWrapper.getChart();
+                  const selection = chart.getSelection();
+                  if (selection.length === 0) return;
+                  const region = data[selection[0].row + 1];
+                  console.log("Selected : " + region);
+                },
+              },
+            ]}
+            chartType="GeoChart"
+            width="100%"
+            height="400px"
+            data={data}
+          />
+        </div>
+
+        {/* Donut Chart */}
+        <div className="card w-full">
+          <h3 className="font-bold text-2xl mb-2">Sales Distribution</h3>
+          <Chart
+            chartType="PieChart"
+            width="100%"
+            height="400px"
+            data={dataDonut}
+            options={optionsDonut}
+          />
+        </div>
       </div>
     </div>
   );

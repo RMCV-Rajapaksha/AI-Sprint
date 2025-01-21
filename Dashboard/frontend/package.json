@@ -6,7 +6,9 @@
     "@radix-ui/react-slot": "^1.1.1",
     "cra-template": "1.2.0",
     "react": "^19.0.0",
+    "react-datepicker": "^7.6.0",
     "react-dom": "^19.0.0",
+    "react-google-charts": "^5.2.1",
     "react-scripts": "5.0.1",
     "recharts": "^2.15.0"
   },
