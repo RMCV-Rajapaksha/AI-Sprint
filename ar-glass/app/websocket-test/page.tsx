@@ -1,8 +1,9 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const page = () => {
   const webSocketRef = useRef<WebSocket | null>(null);
+  const [textInputValue, setTextInputValue] = useState<any>();
   useEffect(() => {
     console.log("use effect started");
     const websocket = new WebSocket("ws://localhost:5000");
@@ -12,7 +13,7 @@ const page = () => {
       const username = getCurrentUsername();
       const handshake = JSON.stringify({ username });
       console.log("handshake to be sent", handshake);
-      websocket.send(handshake);
+      webSocketRef.current?.send(handshake);
       console.log(`Handshake sent as ${username}`);
     });
 
@@ -35,7 +36,46 @@ const page = () => {
   const getCurrentUsername = () => {
     return "ar-glass-1";
   };
-  return <div>Websocket-test</div>;
+
+  const SendMessage = () => {
+    webSocketRef.current?.send(
+      JSON.stringify({
+        messageText: textInputValue,
+        Route: "/echoBackMyMessage",
+      })
+    );
+
+    const messageListenerFunction = (event: any) => {
+      const parsedData = JSON.parse(event.data);
+      console.log("Message from server ", parsedData.messageText);
+      webSocketRef.current?.removeEventListener(
+        "message",
+        messageListenerFunction
+      );
+    };
+
+    webSocketRef.current?.addEventListener("message", messageListenerFunction);
+  };
+
+  return (
+    <>
+      <div>Websocket-test</div>;
+      <input
+        value={textInputValue}
+        onChange={(e) => {
+          setTextInputValue(e.target.value);
+        }}
+      ></input>
+      <div
+        className="bg-green-500 w-24 rounded-xl"
+        onClick={() => {
+          SendMessage();
+        }}
+      >
+        Send
+      </div>
+    </>
+  );
 };
 
 export default page;

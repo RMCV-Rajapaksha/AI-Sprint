@@ -4,6 +4,7 @@ module.exports = class WebSocketHandler {
     this.wsServer = wsServer;
     this.wsConnectedClients = new Map();
     this.mainWebSocketConnectionListner();
+    this.webSocketRouter = new WebSocketRouter(this.wsConnectedClients);
   }
 
   addAuthorizedClient(username, wsclient) {
@@ -41,7 +42,7 @@ module.exports = class WebSocketHandler {
       console.log(
         `Hanshake successfull for user : ${parsedMessage.username}, starting to listen for normal messages of this user`
       );
-
+      this.addAuthorizedClient(parsedMessage.username, wsclient);
       isAuthenticated[0] = true;
       wsclient.on("message", (message) => {
         const newParsedMessage = JSON.parse(message);
@@ -64,6 +65,6 @@ module.exports = class WebSocketHandler {
   }
 
   onMessageHandler(parsedMessage, username) {
-    WebSocketRouter.RouteMessage(parsedMessage, username);
+    this.webSocketRouter.RouteMessage(parsedMessage, username);
   }
 };
