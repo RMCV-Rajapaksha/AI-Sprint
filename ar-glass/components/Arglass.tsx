@@ -68,7 +68,7 @@ const Arglass = () => {
           className="absolute object-cover w-full h-full"
         />
         <canvas ref={canvasRef} className="hidden" />
-        <div className="absolute right-36 bottom-32">
+        <div className="absolute right-5 bottom-5">
           <Image src={"/glass/map.png"} width={300} height={300} alt="map" />
         </div>
 
