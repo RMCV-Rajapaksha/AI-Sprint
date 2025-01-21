@@ -15,35 +15,33 @@ module.exports = class WebSocketHandler {
     this.wsServer.on("connection", (wsclient, req) => {
       console.log("new wsclient connecting");
 
-      var isAuthenticated = [false];
-
       wsclient.once("message", (message) => {
         const parsedMessage = JSON.parse(message);
         console.log("handshake message recieved : ", parsedMessage);
-        this.onceMessageHandler(parsedMessage, isAuthenticated, wsclient);
+        this.onceMessageHandler(parsedMessage, wsclient);
       });
-
-      setTimeout(() => {
-        if (!isAuthenticated[0]) {
-          console.log("Authentication timeout. Closing connection.");
-          wsclient.send(
-            JSON.stringify({
-              messageText: "Authentication timeout. Closing connection.",
-            })
-          );
-          wsclient.close();
-        }
-      }, 5000);
     });
   }
 
-  onceMessageHandler(parsedMessage, isAuthenticated, wsclient) {
+  onceMessageHandler(parsedMessage, wsclient) {
+    const timeoutId = setTimeout(() => {
+      console.log("Authentication timeout. Closing connection.");
+      wsclient.send(
+        JSON.stringify({
+          messageText: "Authentication timeout. Closing connection.",
+        })
+      );
+      wsclient.close();
+    }, 5000); // Timeout after 5 seconds
+
     if (parsedMessage.username) {
       console.log(
         `Hanshake successfull for user : ${parsedMessage.username}, starting to listen for normal messages of this user`
       );
+
+      clearTimeout(timeoutId);
+
       this.addAuthorizedClient(parsedMessage.username, wsclient);
-      isAuthenticated[0] = true;
       wsclient.on("message", (message) => {
         const newParsedMessage = JSON.parse(message);
         this.onMessageHandler(newParsedMessage, parsedMessage.username);
