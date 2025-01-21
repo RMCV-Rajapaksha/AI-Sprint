@@ -7,6 +7,8 @@ import { BrowserMultiFormatReader } from "@zxing/library";
 import Image from "next/image"; // Import Image from next/image
 import Message from "./Message";
 import Controlbox from "./Controlbox";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Webcam = dynamic(() => import("react-webcam"), { ssr: false });
 
@@ -31,13 +33,13 @@ const Arglass = () => {
         const code = jsQR(imageData.data, imageData.width, imageData.height);
 
         if (code) {
-          console.log("QR Code detected:", code.data);
+          toast.success(`QR Code detected: ${code.data}`);
         } else {
           const reader = new BrowserMultiFormatReader();
           reader.decodeFromImageElement(img).then(result => {
-            console.log("Barcode detected:", result.text);
+            toast.success(`Barcode detected: ${result.text}`);
           }).catch(err => {
-            console.error("No barcode detected:", err);
+            toast.error("No barcode detected");
           });
         }
       };
@@ -71,6 +73,7 @@ const Arglass = () => {
         <Message message={messageContent} />
         <Controlbox />
       </div>
+      <ToastContainer />
     </div>
   );
 };
