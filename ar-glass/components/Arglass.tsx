@@ -29,18 +29,24 @@ const Arglass = () => {
         const context = canvas.getContext("2d");
         context.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const imageData = context.getImageData(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
         const code = jsQR(imageData.data, imageData.width, imageData.height);
 
         if (code) {
           toast.success(`QR Code detected: ${code.data}`);
         } else {
           const reader = new BrowserMultiFormatReader();
-          reader.decodeFromImageElement(img).then(result => {
-            toast.success(`Barcode detected: ${result.text}`);
-          }).catch(err => {
-            toast.error("No barcode detected");
-          });
+          reader
+            .decodeFromImageElement(img)
+            .then((result) => {
+              toast.success(`Barcode detected: ${result.text}`);
+            })
+            .catch((err) => {});
         }
       };
     }
@@ -62,12 +68,7 @@ const Arglass = () => {
         />
         <canvas ref={canvasRef} className="hidden" />
         <div className="absolute right-36 bottom-32">
-          <Image
-            src={"/glass/map.png"}
-            width={300}
-            height={300}
-            alt="map"
-          />
+          <Image src={"/glass/map.png"} width={300} height={300} alt="map" />
         </div>
 
         <Message message={messageContent} />
