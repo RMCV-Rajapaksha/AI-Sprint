@@ -1,3 +1,12 @@
 .venv
+<<<<<<< HEAD
+<<<<<<< HEAD
+.env
+node_modules
+=======
+/Dashboard/model2/env
+>>>>>>> c22a9eb3b7c9e40cf0a1e05b4590334e6014c3c7
+=======
 /Dashboard/model2/env
 node_modules
+>>>>>>> 9e445f7e8b1fc4f36f3e1f7a380ec305109138f3
