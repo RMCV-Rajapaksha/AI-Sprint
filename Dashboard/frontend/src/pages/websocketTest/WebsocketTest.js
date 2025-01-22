@@ -87,54 +87,87 @@ export const WebsocketTest = () => {
     );
   };
   return (
-    <>
-      <div>Websocket-test</div>;
-      <input
-        value={textInputValue}
-        onChange={(e) => {
-          setTextInputValue(e.target.value);
-        }}
-      ></input>
-      <div
-        className="bg-green-500 w-24 rounded-xl"
-        onClick={() => {
-          SendMessage();
-        }}
-      >
-        Send
-      </div>
-      <div className="flex flex-col">
-        <div className="text-5xl">Send notification to ar-glass</div>
-        <input
-          value={sendNotificationAR}
-          onChange={(e) => {
-            setsendNotificationAR(e.target.value);
-          }}
-        ></input>
-        <div
-          className="bg-blue-500 w-24 rounded-xl"
-          onClick={() => {
-            ARGlassNotificationCommunicate();
-          }}
-        >
-          Send
+    <div className="min-h-screen p-4 bg-gray-100 md:p-8">
+      {/* Header */}
+      <div className="mx-auto max-w-7xl">
+        <h1 className="mb-8 text-3xl font-bold text-gray-800 md:text-4xl">
+          Notify Warehouse
+        </h1>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {/* Echo Message Card */}
+          <div className="p-6 transition-transform bg-white rounded-lg shadow-lg hover:scale-102">
+            <h2 className="mb-4 text-xl font-semibold text-gray-700">
+              Echo Message
+            </h2>
+            <input
+              value={textInputValue}
+              onChange={(e) => setTextInputValue(e.target.value)}
+              className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Type your message..."
+            />
+            <button
+              onClick={SendMessage}
+              className="flex items-center justify-center px-6 py-2 text-white transition-colors duration-200 bg-green-500 rounded-lg hover:bg-green-600"
+            >
+              Send Message
+            </button>
+          </div>
+
+          {/* AR Glass Communications */}
+          <div className="space-y-8">
+            {/* Notification Card */}
+            <div className="p-6 bg-white rounded-lg shadow-lg">
+              <h2 className="mb-4 text-xl font-semibold text-gray-700">
+                Send Notification to AR Glass
+              </h2>
+              <input
+                value={sendNotificationAR}
+                onChange={(e) => setsendNotificationAR(e.target.value)}
+                className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Type notification message..."
+              />
+              <button
+                onClick={ARGlassNotificationCommunicate}
+                className="flex items-center justify-center px-6 py-2 text-white transition-colors duration-200 bg-blue-500 rounded-lg hover:bg-blue-600"
+              >
+                Send Notification
+              </button>
+            </div>
+
+            {/* Alert Card */}
+            <div className="p-6 bg-white rounded-lg shadow-lg">
+              <h2 className="mb-4 text-xl font-semibold text-gray-700">
+                Send Alert to AR Glass
+              </h2>
+              <input
+                value={sendAlertAR}
+                onChange={(e) => setsendAlertAR(e.target.value)}
+                className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Type alert message..."
+              />
+              <button
+                onClick={ARGlassAlertCommunicate}
+                className="flex items-center justify-center px-6 py-2 text-white transition-colors duration-200 bg-red-500 rounded-lg hover:bg-red-600"
+              >
+                Send Alert
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="text-5xl">Send notification to ar-glass</div>
-        <input
-          value={sendAlertAR}
-          onChange={(e) => {
-            setsendAlertAR(e.target.value);
-          }}
-        ></input>
-        <div
-          className="bg-red-500 w-24 rounded-xl"
-          onClick={() => {
-            ARGlassAlertCommunicate();
-          }}
-        >
-          Send
+
+        {/* Connection Status */}
+        <div className="p-6 mt-8 bg-white rounded-lg shadow-lg">
+          <h2 className="mb-4 text-xl font-semibold text-gray-700">
+            Connection Status
+          </h2>
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span className="text-gray-600">Connected to WebSocket Server</span>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
