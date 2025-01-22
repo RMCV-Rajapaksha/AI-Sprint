@@ -13,6 +13,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Chart } from "react-google-charts";
 import { data, dataDonut, optionsDonut } from "./data/data";
+import Navbar from "./components/Navbar";
 
 function App() {
   const [periods, setPeriods] = useState(4);
@@ -52,7 +53,7 @@ function App() {
   };
 
   return (
-    <div className="container mx-auto justify-center items-center p-4 flex flex-col md:flex-row gap-4">
+    <div className="container relative mx-auto justify-center items-center p-4 flex flex-col md:flex-row gap-4">
       {/* Sales Forecast Section */}
       <div className="card">
         <h2 className="text-3xl font-medium">Sales Forecast</h2>
@@ -96,7 +97,9 @@ function App() {
 
         {forecast && (
           <div style={{ overflowX: "auto", marginTop: "20px" }}>
-            <h3 className="text-2xl font-medium mb-4">Forecasted Sales Chart</h3>
+            <h3 className="text-2xl font-medium mb-4">
+              Forecasted Sales Chart
+            </h3>
             <LineChart
               width={800}
               height={400}
@@ -109,7 +112,12 @@ function App() {
                 label={{ value: "Month", position: "bottom", offset: -10 }}
               />
               <YAxis
-                label={{ value: "Sales", angle: -90, position: "left", offset: 10 }}
+                label={{
+                  value: "Sales",
+                  angle: -90,
+                  position: "left",
+                  offset: 10,
+                }}
               />
               <Tooltip />
               <Legend />
