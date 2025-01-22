@@ -20,6 +20,10 @@ const Arglass = () => {
   const [notification, setNotification] = useState("This is a notification");
   const [alert, setAlert] = useState("This is an alert");
   const [message, setMessage] = useState("This is a message");
+  const [messages, setMessages] = useState<string[]>([
+    "System message 1",
+    "System message 2",
+  ]);
 
   const webcamRef = useRef<any>(null);
   const canvasRef = useRef<any>(null);
@@ -45,6 +49,11 @@ const Arglass = () => {
         console.log("alert Recieved");
         console.log(parsedData);
         setAlert(parsedData.messageText);
+      } else if (parsedData.type == "message") {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          parsedData.messageText,
+        ]);
       }
     };
 
@@ -83,6 +92,7 @@ const Arglass = () => {
 
         if (code) {
           toast.success(`QR Code detected: ${code.data}`);
+          console.log(typeof code.data);
         } else {
           const reader = new BrowserMultiFormatReader();
           reader.decodeFromImageElement(img).then(
@@ -101,6 +111,13 @@ const Arglass = () => {
     return () => clearInterval(interval);
   }, [capture]);
 
+  const updateMessages = (newMessage: string) => {
+    setMessages(() => {
+      messages.push(newMessage);
+
+      return messages;
+    });
+  };
   return (
     <div className="h-[800px] relative mx-6 bg-[url('/glass/warehouse.jpg')] bg-cover bg-center">
       <div className="relative w-full h-full">
@@ -117,13 +134,13 @@ const Arglass = () => {
 
         <Notification notificationMessage={notification} />
         <Controlbox />
-        <MessageBox />
+        <MessageBox messages={messages} />
       </div>
       <AlertBox alert={alert} />
       <div className="absolute bottom-5 left-1/2 translate-x-[-50%] flex gap-3">
         <Button
           className="bg-blue-500"
-          onClick={() => setMessage("New message")}
+          onClick={() => setMessages([...messages, "new message"])}
         >
           Message
         </Button>
