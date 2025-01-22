@@ -95,7 +95,9 @@ export const Home = () => {
 
         {forecast && (
           <div style={{ overflowX: "auto", marginTop: "20px" }}>
-            <h3 className="text-2xl font-medium mb-4">Forecasted Sales Chart</h3>
+            <h3 className="text-2xl font-medium mb-4">
+              Forecasted Sales Chart
+            </h3>
             <LineChart
               width={800}
               height={400}
@@ -108,7 +110,12 @@ export const Home = () => {
                 label={{ value: "Month", position: "bottom", offset: -10 }}
               />
               <YAxis
-                label={{ value: "Sales", angle: -90, position: "left", offset: 10 }}
+                label={{
+                  value: "Sales",
+                  angle: -90,
+                  position: "left",
+                  offset: 10,
+                }}
               />
               <Tooltip />
               <Legend />
@@ -162,6 +169,6 @@ export const Home = () => {
           />
         </div>
       </div>
-      </div>
+    </div>
   );
-}
+};
