@@ -21,22 +21,38 @@ export const Home = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  const getForecast = async (periods) => {
+  // Helper function to generate date range
+  const generateDateRange = (start, end) => {
+    const dates = [];
+    let current = new Date(start);
+    while (current <= end) {
+      dates.push(new Date(current).toISOString().split("T")[0]); // Format as YYYY-MM-DD
+      current.setDate(current.getDate() + 1); // Increment day
+    }
+    return dates;
+  };
+
+  const getForecast = async () => {
     try {
       setLoading(true);
       setError(null);
+
+      const dateRange = generateDateRange(startDate, endDate);
+      const periods = dateRange.length;
+
       const response = await fetch("http://localhost:8000/forecast/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ periods: parseInt(periods) }),
+        body: JSON.stringify({ periods }),
       });
 
       if (!response.ok) throw new Error("Forecast request failed");
+
       const data = await response.json();
       setForecast(
-        data.forecast_dates.map((date, index) => ({
-          date,
-          sales: data.predictions[index],
+        dateRange.map((date, index) => ({
+          date, // Use the generated date
+          sales: data.predictions[index] || 0, // Fallback to 0 if no data
         }))
       );
     } catch (err) {
@@ -81,17 +97,7 @@ export const Home = () => {
 
           {/* Forecast Button */}
           <button
-            onClick={() => {
-              // Calculate the difference in days
-              const diffInMilliseconds =
-                endDate.getTime() - startDate.getTime();
-              const diffInDays = Math.ceil(
-                diffInMilliseconds / (1000 * 60 * 60 * 24)
-              );
-
-              // Call forecast function with calculated periods
-              getForecast(diffInDays);
-            }}
+            onClick={getForecast}
             disabled={loading}
             className="w-full px-4 py-2 text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
