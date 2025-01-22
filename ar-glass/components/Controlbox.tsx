@@ -3,8 +3,8 @@ import React from "react";
 
 const Controlbox = () => {
   return (
-    <div className="absolute top-24 left-0 text-white w-full px-44">
-      <div className="px-10 py-1 border-white border-[1px] rounded-xl flex justify-between items-center">
+    <div className="absolute top-5 rounded-3xl left-0 text-white w-full px-44">
+      <div className="px-10 py-1  border-white border-[1px] rounded-xl flex justify-between items-center">
         <div className="flex-1 flex gap-5">
           <Image
             src={"/icons/battery.svg"}

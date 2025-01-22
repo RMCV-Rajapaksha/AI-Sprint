@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 export const WebsocketTest = () => {
   const webSocketRef = useRef(null);
   const [textInputValue, setTextInputValue] = useState();
+  const [sendNotificationAR, setsendNotificationAR] = useState();
+  const [sendAlertAR, setsendAlertAR] = useState();
   useEffect(() => {
     console.log("use effect started");
     const websocket = new WebSocket("ws://localhost:5000");
@@ -61,6 +63,29 @@ export const WebsocketTest = () => {
 
     webSocketRef.current?.addEventListener("message", messageListenerFunction);
   };
+
+  const ARGlassNotificationCommunicate = () => {
+    webSocketRef.current?.send(
+      JSON.stringify({
+        messageText: sendNotificationAR,
+        Route: "/displayMessageInARGlass",
+        target: "ar-glass-1",
+        type: "notification",
+      })
+    );
+  };
+
+  const ARGlassAlertCommunicate = () => {
+    console.log("running ARGlassAlertCommunicate");
+    webSocketRef.current?.send(
+      JSON.stringify({
+        messageText: sendAlertAR,
+        Route: "/displayMessageInARGlass",
+        target: "ar-glass-1",
+        type: "alert",
+      })
+    );
+  };
   return (
     <>
       <div>Websocket-test</div>;
@@ -77,6 +102,38 @@ export const WebsocketTest = () => {
         }}
       >
         Send
+      </div>
+      <div className="flex flex-col">
+        <div className="text-5xl">Send notification to ar-glass</div>
+        <input
+          value={sendNotificationAR}
+          onChange={(e) => {
+            setsendNotificationAR(e.target.value);
+          }}
+        ></input>
+        <div
+          className="bg-blue-500 w-24 rounded-xl"
+          onClick={() => {
+            ARGlassNotificationCommunicate();
+          }}
+        >
+          Send
+        </div>
+        <div className="text-5xl">Send notification to ar-glass</div>
+        <input
+          value={sendAlertAR}
+          onChange={(e) => {
+            setsendAlertAR(e.target.value);
+          }}
+        ></input>
+        <div
+          className="bg-red-500 w-24 rounded-xl"
+          onClick={() => {
+            ARGlassAlertCommunicate();
+          }}
+        >
+          Send
+        </div>
       </div>
     </>
   );
