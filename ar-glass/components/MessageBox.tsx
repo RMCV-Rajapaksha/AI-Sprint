@@ -1,17 +1,22 @@
-import React from "react";
+"use client";
+import React, { ReactNode, useEffect, useState } from "react";
 import MessageBubble from "./MessageBubble";
 
-const messages = [
-  "System message 1",
-  "System message 2",
-  "System message 3",
-  "System message 4",
-  "System message 5",
-  "System message 6",
-  "System message 7",
-];
-
-const MessageBox = () => {
+const MessageBox = ({ messages }: { messages: any }) => {
+  const [toDisplay, setToDisplay] = useState<ReactNode[]>();
+  useEffect(() => {
+    console.log("use effect fired");
+    loadMessages();
+  }, [messages]);
+  const loadMessages = () => {
+    const components: ReactNode[] = [];
+    messages.forEach((element, index) => {
+      components.push(
+        <MessageBubble key={index} message={element} type="system" />
+      );
+    });
+    setToDisplay(components);
+  };
   return (
     <div className="absolute bottom-5 left-5">
       <div className="backdrop-blur-sm border border-slate-400 w-[500px] h-[250px] px-5 py-3 flex flex-col justify-between gap-1 rounded-2xl">
@@ -19,6 +24,7 @@ const MessageBox = () => {
           {messages.map((message, i) => (
             <MessageBubble key={i} message={message} type="system" />
           ))}
+          {/* {toDisplay} */}
         </div>
         {/* <input
           type="text"
