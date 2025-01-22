@@ -48,7 +48,9 @@ export const WebsocketTest = () => {
     webSocketRef.current?.send(
       JSON.stringify({
         messageText: textInputValue,
-        Route: "/echoBackMyMessage",
+        Route: "/displayMessageInARGlass",
+        target: "ar-glass-1",
+        type: "message",
       })
     );
 
