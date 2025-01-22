@@ -38,7 +38,14 @@ const Arglass = () => {
 
     const handleIncomingMessage = (event: MessageEvent) => {
       const parsedData = JSON.parse(event.data);
-      setNotification(parsedData.messageText); // Update notification
+      console.log("recieved from server: ", parsedData);
+      if (parsedData.type == "notification") {
+        setNotification(parsedData.messageText);
+      } else if (parsedData.type == "alert") {
+        console.log("alert Recieved");
+        console.log(parsedData);
+        setAlert(parsedData.messageText);
+      }
     };
 
     websocket.addEventListener("message", handleIncomingMessage);
