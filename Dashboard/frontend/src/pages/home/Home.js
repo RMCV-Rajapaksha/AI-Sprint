@@ -7,12 +7,13 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
-import "./Home.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Chart } from "react-google-charts";
 import { data, dataDonut, optionsDonut } from "../../data/data";
+
 export const Home = () => {
   const [periods, setPeriods] = useState(4);
   const [forecast, setForecast] = useState(null);
@@ -25,24 +26,20 @@ export const Home = () => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch("http://localhost:8000/forecast/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ periods: parseInt(periods) }),
       });
 
       if (!response.ok) throw new Error("Forecast request failed");
-
       const data = await response.json();
-      const chartData = data.forecast_dates.map((date, index) => ({
-        date,
-        sales: data.predictions[index],
-      }));
-
-      setForecast(chartData);
+      setForecast(
+        data.forecast_dates.map((date, index) => ({
+          date,
+          sales: data.predictions[index],
+        }))
+      );
     } catch (err) {
       setError(err.message);
     } finally {
@@ -51,29 +48,39 @@ export const Home = () => {
   };
 
   return (
-    <div className="container mx-auto justify-center items-center p-4 flex flex-col md:flex-row gap-4">
-      {/* Sales Forecast Section */}
-      <div className="card">
-        <h2 className="text-3xl font-medium">Sales Forecast</h2>
-        <div className="controls">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-3">
-            <div>
-              <label className="periods">From: </label>
+    <div className="min-h-screen p-4 bg-gray-50">
+      <div className="grid grid-cols-1 gap-6 mx-auto max-w-7xl lg:grid-cols-2">
+        {/* Sales Forecast Card */}
+        <div className="p-6 transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-xl">
+          <h2 className="mb-6 text-2xl font-bold text-gray-800">
+            Sales Forecast
+          </h2>
+
+          {/* Date Controls */}
+          <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                From:
+              </label>
               <DatePicker
-                className="p-3"
                 selected={startDate}
-                onChange={(date) => setStartDate(date)}
+                onChange={setStartDate}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <div>
-              <label className="periods">To: </label>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                To:
+              </label>
               <DatePicker
-                className="p-3"
                 selected={endDate}
-                onChange={(date) => setEndDate(date)}
+                onChange={setEndDate}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
+
+          {/* Forecast Button */}
           <button
             onClick={() => {
               const diffInMonths =
@@ -83,90 +90,100 @@ export const Home = () => {
               getForecast();
             }}
             disabled={loading}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            className="w-full px-4 py-2 text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
-            {loading ? "Loading..." : "Get Forecast"}
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="w-5 h-5 mr-2 border-b-2 border-white rounded-full animate-spin"></div>
+                Loading...
+              </div>
+            ) : (
+              "Get Forecast"
+            )}
           </button>
+
+          {/* Error Message */}
+          {error && (
+            <div className="p-3 mt-4 text-red-700 bg-red-100 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          {/* Forecast Chart */}
+          {forecast && (
+            <div className="mt-6">
+              <h3 className="mb-4 text-xl font-semibold text-gray-800">
+                Forecasted Sales
+              </h3>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={forecast}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="sales"
+                      stroke="#4F46E5"
+                      strokeWidth={2}
+                      dot={{ fill: "#4F46E5" }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
         </div>
 
-        {error && (
-          <div style={{ color: "red", marginTop: "10px" }}>{error}</div>
-        )}
-
-        {forecast && (
-          <div style={{ overflowX: "auto", marginTop: "20px" }}>
-            <h3 className="text-2xl font-medium mb-4">
-              Forecasted Sales Chart
+        {/* Charts Section */}
+        <div className="space-y-6">
+          {/* Geographical Chart */}
+          <div className="p-6 transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-xl">
+            <h3 className="mb-4 text-xl font-bold text-gray-800">
+              Geographical Sales Distribution
             </h3>
-            <LineChart
-              width={800}
-              height={400}
-              data={forecast}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="date"
-                label={{ value: "Month", position: "bottom", offset: -10 }}
+            <div className="h-[400px]">
+              <Chart
+                chartEvents={[
+                  {
+                    eventName: "select",
+                    callback: ({ chartWrapper }) => {
+                      const chart = chartWrapper.getChart();
+                      const selection = chart.getSelection();
+                      if (selection.length === 0) return;
+                      const region = data[selection[0].row + 1];
+                      console.log("Selected : " + region);
+                    },
+                  },
+                ]}
+                chartType="GeoChart"
+                width="100%"
+                height="100%"
+                data={data}
               />
-              <YAxis
-                label={{
-                  value: "Sales",
-                  angle: -90,
-                  position: "left",
-                  offset: 10,
+            </div>
+          </div>
+
+          {/* Donut Chart */}
+          <div className="p-6 transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-xl">
+            <h3 className="mb-4 text-xl font-bold text-gray-800">
+              Sales Distribution
+            </h3>
+            <div className="h-[400px]">
+              <Chart
+                chartType="PieChart"
+                width="100%"
+                height="100%"
+                data={dataDonut}
+                options={{
+                  ...optionsDonut,
+                  backgroundColor: "transparent",
                 }}
               />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="sales"
-                stroke="#8884d8"
-                name="Forecasted Sales"
-              />
-            </LineChart>
+            </div>
           </div>
-        )}
-      </div>
-
-      {/* Geographical Sales & Donut Charts Section */}
-      <div className="flex flex-col gap-4">
-        {/* Geographical Sales Distribution */}
-        <div className="card w-full">
-          <h3 className="font-bold text-2xl mb-2">
-            Geographical Sales Distribution
-          </h3>
-          <Chart
-            chartEvents={[
-              {
-                eventName: "select",
-                callback: ({ chartWrapper }) => {
-                  const chart = chartWrapper.getChart();
-                  const selection = chart.getSelection();
-                  if (selection.length === 0) return;
-                  const region = data[selection[0].row + 1];
-                  console.log("Selected : " + region);
-                },
-              },
-            ]}
-            chartType="GeoChart"
-            width="100%"
-            height="400px"
-            data={data}
-          />
-        </div>
-
-        {/* Donut Chart */}
-        <div className="card w-full">
-          <h3 className="font-bold text-2xl mb-2">Sales Distribution</h3>
-          <Chart
-            chartType="PieChart"
-            width="100%"
-            height="400px"
-            data={dataDonut}
-            options={optionsDonut}
-          />
         </div>
       </div>
     </div>
