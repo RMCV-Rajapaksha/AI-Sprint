@@ -15,14 +15,13 @@ import { Chart } from "react-google-charts";
 import { data, dataDonut, optionsDonut } from "../../data/data";
 
 export const Home = () => {
-  const [periods, setPeriods] = useState(4);
   const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  const getForecast = async () => {
+  const getForecast = async (periods) => {
     try {
       setLoading(true);
       setError(null);
@@ -83,11 +82,15 @@ export const Home = () => {
           {/* Forecast Button */}
           <button
             onClick={() => {
-              const diffInMonths =
-                (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-                (endDate.getMonth() - startDate.getMonth());
-              setPeriods(diffInMonths);
-              getForecast();
+              // Calculate the difference in days
+              const diffInMilliseconds =
+                endDate.getTime() - startDate.getTime();
+              const diffInDays = Math.ceil(
+                diffInMilliseconds / (1000 * 60 * 60 * 24)
+              );
+
+              // Call forecast function with calculated periods
+              getForecast(diffInDays);
             }}
             disabled={loading}
             className="w-full px-4 py-2 text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
