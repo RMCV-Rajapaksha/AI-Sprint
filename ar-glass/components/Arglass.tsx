@@ -55,6 +55,7 @@ const Arglass = () => {
 
         if (code) {
           toast.success(`QR Code detected: ${code.data}`);
+          console.log(typeof code.data);
         } else {
           const reader = new BrowserMultiFormatReader();
           reader
