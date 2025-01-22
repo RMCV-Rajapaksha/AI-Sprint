@@ -1,6 +1,9 @@
 const {
   echoBackMyMessage,
 } = require("../webSocketControllers/testMessagesController");
+const {
+  sendMessageToARGlass,
+} = require("../webSocketControllers/communicateWithARController");
 module.exports = class WebSocketRouter {
   constructor(wsConnectedClients) {
     this.wsConnectedClients = wsConnectedClients;
@@ -10,7 +13,8 @@ module.exports = class WebSocketRouter {
     if (parsedMessage.Route) {
       if (parsedMessage.Route == "/echoBackMyMessage") {
         echoBackMyMessage(parsedMessage, username, this);
-      } else if (parsedMessage.Route == "/sendThisToARGlass") {
+      } else if (parsedMessage.Route == "/displayMessageInARGlass") {
+        sendMessageToARGlass(parsedMessage, parsedMessage.target, this);
       }
     } else {
       this.wsConnectedClients
